@@ -1,6 +1,19 @@
+import Cookies from "js-cookie"
+import { useNavigate  } from 'react-router-dom'
+
 import './index.css'
 
-const Header = () => (
+const Header = () => {
+  const navigate = useNavigate();
+
+  
+  const onLogout=()=>{
+    Cookies.remove('jwt_token')
+    navigate('/login', { replace: true })
+  }
+
+
+  return(
   <nav className="nav-header">
     <div className="nav-content">
       <div className="nav-bar-mobile-logo-container">
@@ -30,7 +43,7 @@ const Header = () => (
           <li className="nav-menu-item">Products</li>
           <li className="nav-menu-item">Cart</li>
         </ul>
-        <button type="button" className="logout-desktop-btn">
+        <button type="button" className="logout-desktop-btn" onClick={onLogout}>
           Logout
         </button>
       </div>
@@ -63,5 +76,5 @@ const Header = () => (
       </ul>
     </div>
   </nav>
-)
+)}
 export default Header

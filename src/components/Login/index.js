@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { loginService } from '../Services/servicecalls'
-import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Navigate } from 'react-router-dom'
+import Cookies from "js-cookie"
 
 import './index.css'
 
@@ -13,10 +13,14 @@ const initialFormFields = {
 const Login = () => {
 
     const [formValues, setFormValues] = useState(initialFormFields)
-    const [errorMsg,setErrorMsg]=useState('')
-    const [jwtToken,setToken]=useState('')
-
+    const [errorMsg, setErrorMsg] = useState('')
     const navigate = useNavigate();
+
+    const jwtToken = Cookies.get('jwt_token')
+
+    if (jwtToken !== undefined) {
+        return <Navigate to="/" />
+    }
 
 
     const onChangeFormFields = (event) => {
@@ -24,25 +28,23 @@ const Login = () => {
 
     }
 
-    const onSubmitSuccess=(token)=>{
-        setToken(token)
+    const onSubmitSuccess = (token) => {
+        Cookies.set('jwt_token', token.jwt_token, { expires: 10 })
         navigate('/', { replace: true })
-
-
     }
 
     const onSubmitForm = async (event) => {
         event.preventDefault()
         const response = await loginService(formValues)
-        const data=await response.json()
+        const data = await response.json()
 
         if (response.ok === true) {
-           onSubmitSuccess(data)
+            onSubmitSuccess(data)
 
-          } else {
+        } else {
             setErrorMsg(data.error_msg)
 
-          }
+        }
 
     }
 
